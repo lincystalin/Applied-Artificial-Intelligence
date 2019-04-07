@@ -1,0 +1,547 @@
+// ~->[DNET-1]->~
+
+// File created by GmytrasiewiczP_2 at UIC using Netica 5.24 on Mar 23, 2018 at 03:22:55 UTC.
+
+bnet bolt {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+whenchanged = 1521528946;
+
+visual V6 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 9;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	windowposn = (0, 0, 1223, 606);
+	resolution = 72;
+	drawingbounds = (2380, 1102);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0x00e1e1e1;};
+	NodeSet Nature {BuiltIn = 1; Color = 0x00f8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0x00d3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0x00c8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0x00ffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0x00ffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0x00ffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0x00dee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0x00f0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0x00ffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		};
+	};
+
+node Age {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Infant, Young, MiddleAged, Old);
+	parents = ();
+	probs = 
+		// Infant       Young        MiddleAged   Old          
+		  (0.25,        0.25,        0.25,        0.25);
+	whenchanged = 1521528176;
+	evidence = Young;
+	belief = (0, 1, 0, 0);
+	visual V6 {
+		center = (108, 90);
+		height = 1;
+		};
+	};
+
+node LossOfSleep {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Loss of Sleep";
+	whenchanged = 1521423911;
+	evidence = No;
+	belief = (0, 1);
+	visual V6 {
+		center = (102, 186);
+		height = 6;
+		};
+	};
+
+node History {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "History of Parkinson's in Family";
+	whenchanged = 1521423897;
+	evidence = Yes;
+	belief = (1, 0);
+	visual V6 {
+		center = (114, 264);
+		height = 7;
+		};
+	};
+
+node impSymtoms {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (Yes, No);
+	parents = (Age, LossOfSleep, History);
+	functable = 
+		                    // Age        LossOfSleep History 
+		  (Yes,             // Infant     Yes         Yes     
+		   No,              // Infant     Yes         No      
+		   No,              // Infant     No          Yes     
+		   No,              // Infant     No          No      
+		   Yes,             // Young      Yes         Yes     
+		   No,              // Young      Yes         No      
+		   Yes,             // Young      No          Yes     
+		   No,              // Young      No          No      
+		   Yes,             // MiddleAged Yes         Yes     
+		   No,              // MiddleAged Yes         No      
+		   Yes,             // MiddleAged No          Yes     
+		   No,              // MiddleAged No          No      
+		   Yes,             // Old        Yes         Yes     
+		   Yes,             // Old        Yes         No      
+		   Yes,             // Old        No          Yes     
+		   No);             // Old        No          No      ;
+	title = "Main Symptoms";
+	whenchanged = 1521519118;
+	belief = (1, 0);
+	visual V6 {
+		center = (330, 210);
+		height = 2;
+		};
+	};
+
+node SlownessofMotion {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Slowness of Motion";
+	whenchanged = 1521528891;
+	belief = (0.5, 0.5);
+	visual V6 {
+		center = (426, 48);
+		height = 25;
+		};
+	};
+
+node Stiffness {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Walking/ Moving Stiffness";
+	whenchanged = 1521528899;
+	evidence = Yes;
+	belief = (1, 0);
+	visual V6 {
+		center = (402, 138);
+		height = 26;
+		};
+	};
+
+node MaskedFace {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Masked Face(Decreased Expressions)";
+	whenchanged = 1521519647;
+	evidence = Yes;
+	belief = (1, 0);
+	visual V6 {
+		center = (678, 54);
+		height = 21;
+		};
+	};
+
+node UnsteadyBalance {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Unsteady Balance";
+	whenchanged = 1521525781;
+	evidence = No;
+	belief = (0, 1);
+	visual V6 {
+		center = (762, 138);
+		height = 22;
+		};
+	};
+
+node MomentSymp {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (Yes, No);
+	parents = (SlownessofMotion, Stiffness, MaskedFace, UnsteadyBalance);
+	functable = 
+		                    // SlownessofMotion Stiffness MaskedFace UnsteadyBalance 
+		  (Yes,             // Yes              Yes       Yes        Yes             
+		   Yes,             // Yes              Yes       Yes        No              
+		   Yes,             // Yes              Yes       No         Yes             
+		   No,              // Yes              Yes       No         No              
+		   Yes,             // Yes              No        Yes        Yes             
+		   No,              // Yes              No        Yes        No              
+		   No,              // Yes              No        No         Yes             
+		   No,              // Yes              No        No         No              
+		   Yes,             // No               Yes       Yes        Yes             
+		   Yes,             // No               Yes       Yes        No              
+		   No,              // No               Yes       No         Yes             
+		   No,              // No               Yes       No         No              
+		   No,              // No               No        Yes        Yes             
+		   No,              // No               No        Yes        No              
+		   No,              // No               No        No         Yes             
+		   No);             // No               No        No         No              ;
+	title = "Movement Symptoms";
+	whenchanged = 1521523013;
+	belief = (1, 0);
+	visual V6 {
+		center = (642, 216);
+		height = 9;
+		};
+	};
+
+node ShakingTremors {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Shaking / Tremors";
+	whenchanged = 1521356535;
+	evidence = No;
+	likelihood = (0, 1);
+	belief = (0, 1);
+	visual V6 {
+		center = (918, 66);
+		height = 3;
+		};
+	};
+
+node ShufflingGait {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Shuffling Gait";
+	whenchanged = 1521525788;
+	evidence = Yes;
+	belief = (1, 0);
+	visual V6 {
+		center = (1104, 66);
+		height = 20;
+		};
+	};
+
+node ConstipationUrinaryProblems {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Constipation and Urinary Problems";
+	whenchanged = 1521423904;
+	evidence = Yes;
+	belief = (1, 0);
+	visual V6 {
+		center = (978, 144);
+		height = 5;
+		};
+	};
+
+node Smell {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Loss of Smell";
+	whenchanged = 1521528876;
+	belief = (0.5, 0.5);
+	visual V6 {
+		center = (1176, 168);
+		height = 23;
+		};
+	};
+
+node CommonSymptoms {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (Yes, No);
+	parents = (ShakingTremors, ShufflingGait, ConstipationUrinaryProblems, Smell);
+	functable = 
+		                    // ShakingTremors ShufflingGait ConstipationUrinaryProblems Smell 
+		  (Yes,             // Yes            Yes           Yes                         Yes   
+		   Yes,             // Yes            Yes           Yes                         No    
+		   Yes,             // Yes            Yes           No                          Yes   
+		   Yes,             // Yes            Yes           No                          No    
+		   Yes,             // Yes            No            Yes                         Yes   
+		   No,              // Yes            No            Yes                         No    
+		   No,              // Yes            No            No                          Yes   
+		   No,              // Yes            No            No                          No    
+		   Yes,             // No             Yes           Yes                         Yes   
+		   No,              // No             Yes           Yes                         No    
+		   No,              // No             Yes           No                          Yes   
+		   No,              // No             Yes           No                          No    
+		   No,              // No             No            Yes                         Yes   
+		   No,              // No             No            Yes                         No    
+		   No,              // No             No            No                          Yes   
+		   No);             // No             No            No                          No    ;
+	title = "Common Symptoms";
+	whenchanged = 1521524852;
+	belief = (0.5, 0.5);
+	visual V6 {
+		center = (918, 222);
+		height = 4;
+		};
+	};
+
+node Cumulative {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (Yes, No);
+	parents = (impSymtoms, MomentSymp, CommonSymptoms);
+	functable = 
+		                    // impSymtoms MomentSymp CommonSymptoms 
+		  (Yes,             // Yes        Yes        Yes            
+		   Yes,             // Yes        Yes        No             
+		   Yes,             // Yes        No         Yes            
+		   Yes,             // Yes        No         No             
+		   Yes,             // No         Yes        Yes            
+		   Yes,             // No         Yes        No             
+		   Yes,             // No         No         Yes            
+		   No);             // No         No         No             ;
+	title = "Cumulative Symptoms";
+	whenchanged = 1521525210;
+	belief = (1, 0);
+	visual V6 {
+		center = (642, 354);
+		height = 12;
+		};
+	};
+
+node Swallowing {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Swallowing Difficulties";
+	whenchanged = 1521525808;
+	evidence = No;
+	belief = (0, 1);
+	visual V6 {
+		center = (96, 354);
+		height = 8;
+		};
+	};
+
+node Sex {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Low Sex Drive";
+	whenchanged = 1521525807;
+	evidence = No;
+	belief = (0, 1);
+	visual V6 {
+		center = (114, 450);
+		height = 15;
+		};
+	};
+
+node Anxiety {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Anxiety/ Depression";
+	whenchanged = 1521423888;
+	evidence = Yes;
+	belief = (1, 0);
+	visual V6 {
+		center = (150, 546);
+		height = 14;
+		};
+	};
+
+node mix {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (Yes, No);
+	parents = (Swallowing, Sex, Anxiety);
+	functable = 
+		                    // Swallowing Sex Anxiety 
+		  (Yes,             // Yes        Yes Yes     
+		   Yes,             // Yes        Yes No      
+		   Yes,             // Yes        No  Yes     
+		   No,              // Yes        No  No      
+		   No,              // No         Yes Yes     
+		   No,              // No         Yes No      
+		   No,              // No         No  Yes     
+		   No);             // No         No  No      ;
+	title = "Mixed Symptoms";
+	whenchanged = 1521524886;
+	belief = (0, 1);
+	visual V6 {
+		center = (324, 402);
+		height = 11;
+		};
+	};
+
+node Dizziness {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Dizziness/ Fainting";
+	whenchanged = 1521423895;
+	evidence = No;
+	belief = (0, 1);
+	visual V6 {
+		center = (1098, 240);
+		height = 16;
+		};
+	};
+
+node Handwriting {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Small Handwriting";
+	whenchanged = 1521423903;
+	evidence = Yes;
+	belief = (1, 0);
+	visual V6 {
+		center = (1164, 318);
+		height = 17;
+		};
+	};
+
+node Stooped {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Hunched/Stooped over";
+	whenchanged = 1521528882;
+	evidence = No;
+	belief = (0, 1);
+	visual V6 {
+		center = (1176, 384);
+		height = 24;
+		};
+	};
+
+node Dementia {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Dementia";
+	whenchanged = 1521522791;
+	evidence = No;
+	belief = (0, 1);
+	visual V6 {
+		center = (1158, 468);
+		height = 18;
+		};
+	};
+
+node Sweating {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (Yes, No);
+	parents = ();
+	title = "Excessive Sweating";
+	whenchanged = 1521423891;
+	evidence = Yes;
+	belief = (1, 0);
+	visual V6 {
+		center = (1068, 546);
+		height = 19;
+		};
+	};
+
+node bSymptoms {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (Yes, No);
+	parents = (Dizziness, Handwriting, Stooped, Dementia, Sweating);
+	functable = 
+		                    // Dizziness Handwriting Stooped Dementia Sweating 
+		  (Yes,             // Yes       Yes         Yes     Yes      Yes      
+		   Yes,             // Yes       Yes         Yes     Yes      No       
+		   Yes,             // Yes       Yes         Yes     No       Yes      
+		   Yes,             // Yes       Yes         Yes     No       No       
+		   Yes,             // Yes       Yes         No      Yes      Yes      
+		   Yes,             // Yes       Yes         No      Yes      No       
+		   Yes,             // Yes       Yes         No      No       Yes      
+		   No,              // Yes       Yes         No      No       No       
+		   Yes,             // Yes       No          Yes     Yes      Yes      
+		   Yes,             // Yes       No          Yes     Yes      No       
+		   Yes,             // Yes       No          Yes     No       Yes      
+		   No,              // Yes       No          Yes     No       No       
+		   Yes,             // Yes       No          No      Yes      Yes      
+		   No,              // Yes       No          No      Yes      No       
+		   No,              // Yes       No          No      No       Yes      
+		   No,              // Yes       No          No      No       No       
+		   Yes,             // No        Yes         Yes     Yes      Yes      
+		   Yes,             // No        Yes         Yes     Yes      No       
+		   Yes,             // No        Yes         Yes     No       Yes      
+		   No,              // No        Yes         Yes     No       No       
+		   Yes,             // No        Yes         No      Yes      Yes      
+		   No,              // No        Yes         No      Yes      No       
+		   No,              // No        Yes         No      No       Yes      
+		   No,              // No        Yes         No      No       No       
+		   Yes,             // No        No          Yes     Yes      Yes      
+		   No,              // No        No          Yes     Yes      No       
+		   No,              // No        No          Yes     No       Yes      
+		   No,              // No        No          Yes     No       No       
+		   No,              // No        No          No      Yes      Yes      
+		   No,              // No        No          No      Yes      No       
+		   No,              // No        No          No      No       Yes      
+		   No);             // No        No          No      No       No       ;
+	title = "Behavourial Symptoms";
+	whenchanged = 1521525046;
+	belief = (0, 1);
+	visual V6 {
+		center = (936, 384);
+		height = 10;
+		};
+	};
+
+node Result {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (NoChances, VeryLow, Low, High, VeryHigh);
+	parents = (mix, Cumulative, bSymptoms);
+	functable = 
+		                    // mix Cumulative bSymptoms 
+		  (VeryHigh,        // Yes Yes        Yes       
+		   VeryHigh,        // Yes Yes        No        
+		   High,            // Yes No         Yes       
+		   Low,             // Yes No         No        
+		   High,            // No  Yes        Yes       
+		   VeryLow,         // No  Yes        No        
+		   NoChances,       // No  No         Yes       
+		   NoChances);      // No  No         No        ;
+	title = "Exhibiting Symptoms of Parkinson's";
+	whenchanged = 1521525533;
+	belief = (0, 1, 0, 0, 0);
+	visual V6 {
+		center = (642, 510);
+		height = 13;
+		};
+	};
+ElimOrder = (Swallowing, Sex, Anxiety, Age, LossOfSleep, History, impSymtoms, SlownessofMotion, Stiffness, MaskedFace, UnsteadyBalance, MomentSymp, ShakingTremors, ShufflingGait, ConstipationUrinaryProblems, Smell, CommonSymptoms, Result, Cumulative, mix, Dizziness, Handwriting, Stooped, Dementia, Sweating, bSymptoms);
+};
